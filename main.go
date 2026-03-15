@@ -4,18 +4,21 @@ import (
 	"net/http"
 )
 
-type MyHandler struct {
+func mainHandler(res http.ResponseWriter, req *http.Request) {
+	res.Write([]byte("It's main Page"))
 }
 
-func (h MyHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	data := []byte("Hello")
-	res.Write(data)
+func apiHandler(res http.ResponseWriter, req *http.Request) {
+	res.Write([]byte("It's api page"))
 }
 
 func main() {
-	var h MyHandler
+	mux := http.NewServeMux()
 
-	err := http.ListenAndServe("localhost:3300", h)
+	mux.HandleFunc("/", mainHandler)
+	mux.HandleFunc("/api/", apiHandler)
+
+	err := http.ListenAndServe("localhost:3300", mux)
 	if err != nil {
 		panic(err)
 	}
